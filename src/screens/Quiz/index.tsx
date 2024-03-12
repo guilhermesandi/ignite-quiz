@@ -10,7 +10,7 @@ import Animated, {
   useAnimatedScrollHandler,
   Extrapolate,
 } from "react-native-reanimated";
-import { GestureDetector, Gesture } from 'react-native-gesture-handler';
+import { GestureDetector, Gesture } from "react-native-gesture-handler";
 
 import { useNavigation, useRoute } from "@react-navigation/native";
 
@@ -89,15 +89,15 @@ export function Quiz() {
             [-40, 0],
             Extrapolate.CLAMP
           ),
-        }
-      ]
-    }
-  })
+        },
+      ],
+    };
+  });
 
   const headerStyles = useAnimatedStyle(() => {
     return {
       opacity: interpolate(scrollY.value, [60, 90], [1, 0], Extrapolate.CLAMP),
-    }
+    };
   });
 
   function handleSkipConfirm() {
@@ -171,6 +171,9 @@ export function Quiz() {
     .onUpdate((event) => {
       cardPosition.value = event.translationX;
     })
+    .onEnd(() => {
+      cardPosition.value = withTiming(0);
+    });
 
   useEffect(() => {
     const quizSelected = QUIZ.filter((item) => item.id === id)[0];
@@ -191,9 +194,7 @@ export function Quiz() {
   return (
     <View style={styles.container}>
       <Animated.View style={fixedProgressBarStyles}>
-        <Text style={styles.title}>
-          {quiz.title}
-        </Text>
+        <Text style={styles.title}>{quiz.title}</Text>
 
         <ProgressBar
           total={quiz.questions.length}
