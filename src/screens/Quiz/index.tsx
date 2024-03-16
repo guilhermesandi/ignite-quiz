@@ -186,6 +186,7 @@ export function Quiz() {
   });
 
   const onPan = Gesture.Pan()
+    .activateAfterLongPress(200)
     .onUpdate((event) => {
       const moveToLeft = event.translationX < 0;
 
@@ -242,7 +243,7 @@ export function Quiz() {
           />
         </Animated.View>
 
-        <GestureDetector gesture={onPan}>
+        <GestureDetector gesture={Gesture.Simultaneous(onPan, onLongPress)}>
           <Animated.View style={[shakeStyleAnimated, dragStyles]}>
             <Question
               key={quiz.questions[currentQuestion].title}
