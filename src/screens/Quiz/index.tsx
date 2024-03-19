@@ -26,7 +26,7 @@ import { QuizHeader } from "../../components/QuizHeader";
 import { ConfirmButton } from "../../components/ConfirmButton";
 import { OutlineButton } from "../../components/OutlineButton";
 import { ProgressBar } from "../../components/ProgressBar";
-import { OverlayFeedback } from "../../components/OverlayFeedback";
+import { OverlayFeedback, STATUS_REPLY } from "../../components/OverlayFeedback";
 
 import { THEME } from "../../styles/theme";
 
@@ -42,11 +42,13 @@ const CARD_SKIP_AREA = (-200);
 export function Quiz() {
   const [points, setPoints] = useState(0);
   const [isLoading, setIsLoading] = useState(true);
-  const [currentQuestion, setCurrentQuestion] = useState(0);
+  const [currentQuestion, setCurrentQuestion] = useState(STATUS_REPLY.DEFAULT);
   const [quiz, setQuiz] = useState<QuizProps>({} as QuizProps);
   const [alternativeSelected, setAlternativeSelected] = useState<null | number>(
     null
   );
+
+  const [statusReply, setStatusReply] = useState(0);
 
   const shake = useSharedValue(0);
   const scrollY = useSharedValue(0);
@@ -157,8 +159,10 @@ export function Quiz() {
     }
 
     if (quiz.questions[currentQuestion].correct === alternativeSelected) {
+      setStatusReply(STATUS_REPLY.CORRECT);
       setPoints((prevState) => prevState + 1);
     } else {
+      setStatusReply(STATUS_REPLY.WRONG);
       shakeAnimation();
     }
 
@@ -222,7 +226,7 @@ export function Quiz() {
 
   return (
     <View style={styles.container}>
-      <OverlayFeedback status={0} />
+      <OverlayFeedback status={statusReply} />
 
       <Animated.View style={fixedProgressBarStyles}>
         <Text style={styles.title}>{quiz.title}</Text>
