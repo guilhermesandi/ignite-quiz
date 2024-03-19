@@ -26,6 +26,8 @@ import { QuizHeader } from "../../components/QuizHeader";
 import { ConfirmButton } from "../../components/ConfirmButton";
 import { OutlineButton } from "../../components/OutlineButton";
 import { ProgressBar } from "../../components/ProgressBar";
+import { OverlayFeedback } from "../../components/OverlayFeedback";
+
 import { THEME } from "../../styles/theme";
 
 interface Params {
@@ -220,6 +222,8 @@ export function Quiz() {
 
   return (
     <View style={styles.container}>
+      <OverlayFeedback status={0} />
+
       <Animated.View style={fixedProgressBarStyles}>
         <Text style={styles.title}>{quiz.title}</Text>
 
@@ -243,7 +247,7 @@ export function Quiz() {
           />
         </Animated.View>
 
-        <GestureDetector gesture={Gesture.Simultaneous(onPan, onLongPress)}>
+        <GestureDetector gesture={onPan}>
           <Animated.View style={[shakeStyleAnimated, dragStyles]}>
             <Question
               key={quiz.questions[currentQuestion].title}
