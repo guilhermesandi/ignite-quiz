@@ -29,6 +29,7 @@ import { ProgressBar } from "../../components/ProgressBar";
 import { OverlayFeedback, STATUS_REPLY } from "../../components/OverlayFeedback";
 
 import { THEME } from "../../styles/theme";
+import { Audio } from "expo-av";
 
 interface Params {
   id: string;
@@ -58,6 +59,15 @@ export function Quiz() {
 
   const route = useRoute();
   const { id } = route.params as Params;
+
+  async function playSound(isCorrect: boolean) {
+    const file = isCorrect ? require("../../assets/correct.mp3") : require("../../assets/wrong.mp3");
+
+    const { sound } = await Audio.Sound.createAsync(file, { shouldPlay: true });
+
+    await sound.setPositionAsync(0);
+    await sound.playAsync();
+  }
 
   function shakeAnimation() {
     shake.value = withSequence(
@@ -164,10 +174,13 @@ export function Quiz() {
     }
 
     if (quiz.questions[currentQuestion].correct === alternativeSelected) {
-      setStatusReply(STATUS_REPLY.CORRECT);
       setPoints((prevState) => prevState + 1);
+
+      await playSound(true);
+      setStatusReply(STATUS_REPLY.CORRECT);
       handleNextQuestion();
     } else {
+      await playSound(false);
       setStatusReply(STATUS_REPLY.WRONG);
       shakeAnimation();
     }
