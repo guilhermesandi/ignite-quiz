@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { Alert, Text, View } from "react-native";
+import { Alert, BackHandler, Text, View } from "react-native";
 import Animated, {
   useAnimatedStyle,
   useSharedValue,
@@ -28,7 +28,10 @@ import { QuizHeader } from "../../components/QuizHeader";
 import { ConfirmButton } from "../../components/ConfirmButton";
 import { OutlineButton } from "../../components/OutlineButton";
 import { ProgressBar } from "../../components/ProgressBar";
-import { OverlayFeedback, STATUS_REPLY } from "../../components/OverlayFeedback";
+import {
+  OverlayFeedback,
+  STATUS_REPLY,
+} from "../../components/OverlayFeedback";
 
 import { THEME } from "../../styles/theme";
 
@@ -39,7 +42,7 @@ interface Params {
 type QuizProps = (typeof QUIZ)[0];
 
 const CARD_INCLINATION = 10;
-const CARD_SKIP_AREA = (-200);
+const CARD_SKIP_AREA = -200;
 
 export function Quiz() {
   const [points, setPoints] = useState(0);
@@ -62,7 +65,9 @@ export function Quiz() {
   const { id } = route.params as Params;
 
   async function playSound(isCorrect: boolean) {
-    const file = isCorrect ? require("../../assets/correct.mp3") : require("../../assets/wrong.mp3");
+    const file = isCorrect
+      ? require("../../assets/correct.mp3")
+      : require("../../assets/wrong.mp3");
 
     const { sound } = await Audio.Sound.createAsync(file, { shouldPlay: true });
 
@@ -76,7 +81,7 @@ export function Quiz() {
     shake.value = withSequence(
       withTiming(3, { duration: 400, easing: Easing.bounce }),
       withTiming(0, undefined, (finished) => {
-        'worklet';
+        "worklet";
         if (finished) {
           runOnJS(handleNextQuestion)();
         }
@@ -241,6 +246,15 @@ export function Quiz() {
       handleNextQuestion();
     }
   }, [points]);
+
+  useEffect(() => {
+    const backHandler = BackHandler.addEventListener(
+      "hardwareBackPress",
+      handleStop
+    );
+
+    return () => backHandler.remove();
+  }, []);
 
   if (isLoading) {
     return <Loading />;
